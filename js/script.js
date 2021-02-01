@@ -12,10 +12,10 @@ $(function () { // Same as document.addEventListener("DOMContentLoaded"...
 (function (global) {
 
 var dc = {};
-
+var rand = null
 var homeHtmlUrl = "snippets/home-snippet.html";
 var allCategoriesUrl =
-  "https://davids-restaurant.herokuapp.com/categories.json";
+  "https://davids-restaurant.herokuapp.com/categories.json/";
 var categoriesTitleHtml = "snippets/categories-title-snippet.html";
 var categoryHtml = "snippets/category-snippet.html";
 var menuItemsUrl =
@@ -82,8 +82,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 // On first load, show home view
 showLoading("#main-content");
 $ajaxUtils.sendGetRequest(
-  allCategoriesUrl,
-  [...], // ***** <---- TODO: STEP 1: Substitute [...] ******
+  allCategoriesUrl,function(categories){
+   buildAndShowHomeHTML(buildAndShowHomeHTML);
+   rand=chooseRandomCategory(categories);
+  }
+    ,
+                        // ***** <---- TODO: STEP 1: Substitute [...] ******
+ 
   true); // Explicitly setting the flag to get JSON from server processed into an object literal
 });
 // *** finish **
@@ -92,18 +97,21 @@ $ajaxUtils.sendGetRequest(
 // Builds HTML for the home page based on categories array
 // returned from the server.
 function buildAndShowHomeHTML (categories) {
-
+var res = categories[1];
+console.log(res);
   // Load home snippet page
   $ajaxUtils.sendGetRequest(
     homeHtmlUrl,
-    function (homeHtml) {
+    function (homeHtmlUrl) {
 
       // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
       // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
       // variable's name implies it expects.
-      // var chosenCategoryShortName = ....
-
-
+      var randCat= chooseRandomCategory(categories);
+      var chosenCategoryShortName ="'"+rand.short_name+"'";
+      console.log(chosenCategoryShortName);
+      //var chosenCategoryShortName ="'"+chooseRandomCategory(categories).toUpperCase()+"'";
+//chosenCategoryShortName = "'"+chosenCategoryShortName+"'";
       // TODO: STEP 3: Substitute {{randomCategoryShortName}} in the home html snippet with the
       // chosen category from STEP 2. Use existing insertProperty function for that purpose.
       // Look through this code for an example of how to do use the insertProperty function.
@@ -115,8 +123,9 @@ function buildAndShowHomeHTML (categories) {
       // Hint: you need to surround the chosen category short name with something before inserting
       // it into the home html snippet.
       //
-      // var homeHtmlToInsertIntoMainPage = ....
-
+       var homeHtmlToInsertIntoMainPage = insertProperty(homeHtmlUrl,"randomCategoryShortName",chosenCategoryShortName);
+  
+ insertHtml("#main-content",homeHtmlToInsertIntoMainPage);
 
       // TODO: STEP 4: Insert the the produced HTML in STEP 3 into the main page
       // Use the existing insertHtml function for that purpose. Look through this code for an example
@@ -131,10 +140,14 @@ function buildAndShowHomeHTML (categories) {
 // Given array of category objects, returns a random category object.
 function chooseRandomCategory (categories) {
   // Choose a random index into the array (from 0 inclusively until array length (exclusively))
-  var randomArrayIndex = Math.floor(Math.random() * categories.length);
-
+ var randomArrayIndex = Math.floor(Math.random() * categories.length);
+//var item = items[Math.floor(Math.random() * items.length)];
+//var randomCat = categories[Math.floor(Math.random() * categories.length)]; 
+//console.log(randomCat);
   // return category object with that randomArrayIndex
+ console.log(categories[randomArrayIndex]);
   return categories[randomArrayIndex];
+// return randomCat;
 }
 
 
